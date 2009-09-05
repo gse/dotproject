@@ -1,11 +1,11 @@
+<?php
+global $AppUI, $carr, $carrWidth, $contact_types, $currentTabId, $currentTabName, $showfields, $tdw, $x, $z;
+?>
 <form action="./index.php" method='get' name="modProjects">
   <input type='hidden' name='m' value='projects' />
   <input type='hidden' name='a' value='view' />
   <input type='hidden' name='project_id' />
 </form>
-<?php
-global $AppUI, $carr, $carrWidth, $contact_types, $currentTabId, $currentTabName, $showfields, $tdw, $x, $z;
-?>
 <table width="100%" border="0" cellpadding="1" cellspacing="1" height="400" class="contacts">
 <tr>
 <?php

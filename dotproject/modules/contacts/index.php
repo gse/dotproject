@@ -173,7 +173,8 @@ if ($canAuthor) {
 	);
 	$titleBlock->addCrumbRight(
 		'<a href="./index.php?m=contacts&a=csvexport&suppressHeaders=true">' . $AppUI->_('CSV Download'). "</a> | " .
-		'<a href="./index.php?m=contacts&a=vcardimport&dialog=0">' . $AppUI->_('Import vCard') . '</a>'
+		'<a href="./index.php?m=contacts&a=vcardimport&dialog=0">' . $AppUI->_('Import vCard') . '</a> | ' .
+		'<a href="./index.php?m=contacts&a=export_pdflist&suppressHeaders=true&contact_type='.$tab.'">PDF</a>'
 	);
 }
 $titleBlock->show();

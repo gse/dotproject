@@ -9,6 +9,20 @@ if (!($canAccess)) {
 	$AppUI->redirect('m=public&a=access_denied');
 }
 
+// End of project status update
+// retrieve any state parameters
+if (isset($_GET['tab'])) {
+	$AppUI->setState('ContactsIdxTab', $_GET['tab']);
+}
+
+$tab = $AppUI->getState('ContactsIdxTab') !== NULL ? $AppUI->getState('ContactsIdxTab') : 500;
+//$currentTabId = $tab;
+$active = intval(!$AppUI->getState('ContactsIdxTab'));
+
+
+// load the contact types
+$contact_types = dPgetSysVal('UserType');
+
 // To configure an aditional filter to use in the search string
 $additional_filter = "";
 // retrieve any state parameters
@@ -72,6 +86,9 @@ $q->addWhere("
 		OR (contact_private=1 AND contact_owner=$AppUI->user_id)
 		OR contact_owner IS NULL OR contact_owner = 0
 	)");
+if ($tab != 500) {
+	$q->addWhere('contact_type = '.$tab);
+}
 if (count($allowedCompanies)) {
 	$comp_where = implode(' AND ', $allowedCompanies);
 	$q->addWhere('((' . $comp_where . ') OR contact_company = 0)');
@@ -147,9 +164,6 @@ $a2z .= "\n</tr>\n<tr><td colspan='28'>$form</td></tr></table>";
 
 // setup the title block
 
-// what purpose is the next line for? Commented out by gregorerhardt, Bug #892912
-// $contact_id = $carr[$z][$x]["contact_id"];
-
 $titleBlock = new CTitleBlock('Contacts', 'monkeychat-48.png', $m, "$m.$a");
 $titleBlock->addCell($a2z);
 if ($canAuthor) {
@@ -164,8 +178,6 @@ if ($canAuthor) {
 }
 $titleBlock->show();
 
-// TODO: Check to see that the Edit function is separated.
-
 ?>
 <script language="javascript">
 // Callback function for the generic selector
@@ -177,66 +189,15 @@ function goProject(key, val) {
         }
 }
 </script>
-<form action="./index.php" method='get' name="modProjects">
-  <input type='hidden' name='m' value='projects' />
-  <input type='hidden' name='a' value='view' />
-  <input type='hidden' name='project_id' />
-</form>
-<table width="100%" border="0" cellpadding="1" cellspacing="1" height="400" class="contacts">
-<tr>
+
 <?php
-	for ($z=0; $z < $carrWidth; $z++) {
+$tabBox = new CTabBox('?m=contacts', DP_BASE_DIR . '/modules/contacts/', $tab);
+$tabBox->add('vw_idx_list', $AppUI->_('All') , true,  500);
+foreach ($contact_types as $psk => $project_status) {
+		$tabBox->add('vw_idx_list', 
+					 (($project_status_tabs[$psk]) ? $project_status_tabs[$psk] : $AppUI->_($project_status)), true, $psk);
+}
+
+$min_view = true;
+$tabBox->show();
 ?>
-	<td valign="top" align="left" bgcolor="#f4efe3" width="<?php echo $tdw;?>%">
-	<?php
-		for ($x=0; $x < @count($carr[$z]); $x++) {
-	?>
-		<table width="100%" cellspacing="1" cellpadding="1">
-		<tr>
-			<td width="100%">
-                                <?php $contactid = $carr[$z][$x]['contact_id']; ?>
-				<a href="./index.php?m=contacts&a=view&contact_id=<?php echo $contactid; ?>"><strong><?php echo $carr[$z][$x]['contact_first_name'] . ' ' . $carr[$z][$x]['contact_last_name'];?></strong></a>&nbsp;
-				&nbsp;<a  title="<?php echo $AppUI->_('Export vCard for').' '.$carr[$z][$x]["contact_first_name"].' '.$carr[$z][$x]["contact_last_name"]; ?>" href="?m=contacts&a=vcardexport&suppressHeaders=true&contact_id=<?php echo $contactid; ?>" >(vCard)</a>
-                                &nbsp;<a title="<?php echo $AppUI->_('Edit'); ?>" href="?m=contacts&a=addedit&contact_id=<?php echo $contactid; ?>"><?php echo $AppUI->_('Edit'); ?></a>
-<?php
-$q  = new DBQuery;
-$q->addTable('projects');
-$q->addQuery('count(*)');
-$q->addWhere("project_contacts like \"" .$carr[$z][$x]["contact_id"]
-	.",%\" or project_contacts like \"%," .$carr[$z][$x]["contact_id"] 
-	.",%\" or project_contacts like \"%," .$carr[$z][$x]["contact_id"]
-	."\" or project_contacts like \"" .$carr[$z][$x]["contact_id"] ."\"");
-	
- $res = $q->exec();
- $projects_contact = db_fetch_row($res);
- $q->clear();
- if ($projects_contact[0]>0)
-   echo "				&nbsp;<a href=\"\" onClick=\"	window.open('./index.php?m=public&a=selector&dialog=1&callback=goProject&table=projects&user_id=" .$carr[$z][$x]["contact_id"] ."', 'selector', 'left=50,top=50,height=250,width=400,resizable')
-;return false;\">".$AppUI->_('Projects')."</a>";
-?>
-			</td>
-		</tr>
-		<tr>
-			<td class="hilite">
-			<?php
-				reset($showfields);
-				while (list($key, $val) = each($showfields)) {
-					if (mb_strlen($carr[$z][$x][$key]) > 0) {
-						if ($val == "contact_email") {
-						  echo "<A HREF='mailto:{$carr[$z][$x][$key]}' class='mailto'>{$carr[$z][$x][$key]}</a>\n";
-                        } else if ($val == "contact_company" && is_numeric($carr[$z][$x][$key])) {
-						} else {
-						  echo  $carr[$z][$x][$key]. "<br />";
-						}
-					}
-				}
-			?>
-			</td>
-		</tr>
-		</table>
-		<br />&nbsp;<br />
-	<?php }?>
-	</td>
-<?php }?>
-</tr>
-</table>

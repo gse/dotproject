@@ -4,9 +4,7 @@
   <input type='hidden' name='project_id' />
 </form>
 <?php
-echo "hallo";
 global $AppUI, $carr, $carrWidth, $contact_types, $currentTabId, $currentTabName, $showfields, $tdw, $x, $z;
-
 ?>
 <table width="100%" border="0" cellpadding="1" cellspacing="1" height="400" class="contacts">
 <tr>

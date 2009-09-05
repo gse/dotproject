@@ -9,9 +9,12 @@ $company_name = dPgetParam($_REQUEST, 'company_name', null);
 
 // check permissions for this record
 $canEdit = getPermission($m, 'edit', $contact_id);
-if (!(($canEdit && $contact_id) || ($canAuthor && !($contact_id))) {
+if (!($canEdit && $contact_id) || ($canAuthor && !($contact_id))) {
 	$AppUI->redirect('m=public&a=access_denied');
 }
+
+// load the contact types
+$contact_types = dPgetSysVal('UserType');
 
 // load the record data
 $msg = '';
@@ -149,7 +152,7 @@ function companyChange() {
 	<input type="hidden" name="contact_owner" value="<?php echo $row->contact_owner ? $row->contact_owner : $AppUI->user_id;?>" />
 
 <tr>
-	<td colspan="2">
+	<td>
 		<table border="0" cellpadding="1" cellspacing="1">
 		<tr>
 			<td align="right"><?php echo $AppUI->_('First Name');?>:</td>
@@ -176,6 +179,16 @@ function companyChange() {
 				<input type="checkbox" value="1" name="contact_private" id="contact_private" <?php echo (@$row->contact_private ? 'checked="checked"' : '');?> />
 			</td>
 		</tr>
+		</table>
+	</td>
+	<td align="left" valign="top"> 
+		<table border="0" cellpadding="1" cellspacing="1">
+			<tr>
+				<td align="right"><?php echo $AppUI->_('Contact ID');?>:</td>
+				<td>
+					<input type="text" class="text" size=25 name="contact_identifier" value="<?php echo @$row->contact_identifier;?>" maxlength="50" />
+				</td>
+			</tr>
 		</table>
 	</td>
 </tr>
@@ -213,7 +226,11 @@ function companyChange() {
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Type');?>:</td>
-			<td><input type="text" class="text" name="contact_type" value="<?php echo @$row->contact_type;?>" maxlength="50" size="25" /></td>
+			<td>	
+				<?php
+				echo arraySelect($contact_types, 'contact_type', 'size="1" class="text"', @$row->contact_type, true);
+				?>
+			</td>
 		</tr>
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Address');?>1:</td>

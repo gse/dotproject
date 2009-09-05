@@ -32,6 +32,9 @@ if (!$row->load($contact_id) && $contact_id > 0) {
 	$AppUI->redirect('m=public&a=access_denied');
 }
 
+// load contact type list values
+$contact_types = dPgetSysVal('UserType');
+
 // Get the contact details for company and department
 $company_detail = $row->getCompanyDetails();
 $dept_detail = $row->getDepartmentDetails();
@@ -70,7 +73,7 @@ function delIt() {
 
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
 <tr>
-	<td colspan="2">
+	<td>
 		<table border="0" cellpadding="1" cellspacing="1">
 		<tr>
 			<td align="right"><?php echo $AppUI->_('First Name');?>:</td>
@@ -83,6 +86,14 @@ function delIt() {
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Display Name');?>: </td>
 			<td><?php echo @$row->contact_order_by;?></td>
+		</tr>
+		</table>
+	</td>
+	<td align="left" valign="top">
+		<table border="0" cellpadding="1" cellspacing="1">
+		<tr>
+			<td align="right"><?php echo $AppUI->_('Contact ID');?>:</td>
+			<td><?php echo @$row->contact_identifier;?></td>
 		</tr>
 		</table>
 	</td>
@@ -117,7 +128,7 @@ function delIt() {
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Type');?>:</td>
-			<td><?php echo @$row->contact_type;?></td>
+			<td><?php echo $AppUI->_($contact_types[@$row->contact_type]); ?></td>
 		</tr>
 		<tr>
 			<td align="right" valign="top" width="100"><?php echo $AppUI->_('Address');?>:</td>

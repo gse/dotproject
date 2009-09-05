@@ -18,6 +18,7 @@ class CContact extends CDpObject{
 /** @var int */
 	var $contact_id = NULL;
 /** @var string */
+	var $contact_identifier = NULL;
 	var $contact_first_name = NULL;
 /** @var string */
 	var $contact_last_name = NULL;

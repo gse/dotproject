@@ -9,3 +9,7 @@
 # adding config value to toggle use of TLS in SMTP connections
 INSERT INTO `config` (`config_id`, `config_name`, `config_value`, `config_group`, `config_type`)
 VALUES (0, 'mail_smtp_tls', 'false', 'mail', 'checkbox'); 
+
+# 20090905
+# adding some new contact fields
+ALTER TABLE `contacts` ADD `contact_identifier` TINYTEXT AFTER `contact_id`;
